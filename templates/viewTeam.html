@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='main.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<div class="index-wrapper">
+    <a class="index-header" href="/">
+        Task Tracker
+    </a>
+    <div class="top-contain">
+        <a href="/logout">
+            <button class="top-bar">Log Out</button>
+        </a>
+        <a href="/task">
+            <button class="top-bar">Task</button>
+        </a>
+        <a href="/ViewUsers">
+            <button class="top-bar">User Management</button>
+        </a>
+        <a href="/viewTeam">
+            <button class="top-bar">Teams</button>
+        </a>
+    </div>
+</div>
+    {% if error %}
+        <h2 class="error"><strong>Error:</strong> {{ error }}</h2>
+    {% endif %}
+
+<form action="/newTeam" method="post">
+    <div class="register-container">
+        <h3 class="register-head">Add a new team</h3>
+        <label>Name:</label>
+        <input required type="text" name="name" value="{{ request.form['name'] }}">
+        <br>
+        <button class="submit-button" type="submit">Add</button>
+        <br>
+    </div>
+</form>
+<div class="todo">
+    <table>
+        <thead>
+        <tr>
+            <th>Team Name</th>
+            <th>Members</th>
+            <th></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for team in team_list %}
+            <tr>
+                <td>{{ team.name }}</td>
+                <td>{% for user in user_list %}
+                    {% if user.team == team.name %}{{ user.name }},{% endif %}{% endfor %}</td>
+                {% if user.access == 1 %}
+                    <td><a href="/deleteTeam/{{ team.id }}">
+                        <button class="task-button">Delete</button>
+                    </a>
+                    </td>{% endif %}
+            </tr>
+        {% endfor %}
+        <tr><td>Unassigned</td>
+        <td>{% for user in user_list %}
+                    {% if user.team == '' %}{{ user.name }},{% endif %}{% endfor %}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+{% if message %}
+    {% for row in message %}
+        <p class="error"><strong>Error:</strong> {{ row }}
+    {% endfor %}
+{% endif %}
+
+
+</body>
+
+</html>
